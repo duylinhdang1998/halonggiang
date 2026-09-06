@@ -1,38 +1,28 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { chapters } from '@/lib/profile';
-import { activeChapter, revealProgress } from '@/lib/scroll-state.mjs';
+import {useEffect,useRef,useState} from 'react';
+import {gsap} from 'gsap';
+import {ScrollTrigger} from 'gsap/ScrollTrigger';
+import {chapterProgress,timelineState} from '@/lib/scroll-state.mjs';
+const SCROLL_SCREENS = 7;
+const SCRUB_SECONDS = .65;
 
 export function useProfileScroll() {
-  const [state, setState] = useState({ progress: 0, active: 0 });
-  useEffect(() => {
-    let frame = 0;
-    let mounted = true;
-    let positions: number[] = [];
-    const measure = () => {
-      positions = chapters.map(({ id }) => document.getElementById(id)?.offsetTop ?? 0);
-    };
-    const update = () => {
-      frame = 0;
-      const top = window.scrollY;
-      setState({ progress: revealProgress(top, positions.at(-1) ?? 0), active: activeChapter(top, positions, window.innerHeight) });
-    };
-    const schedule = () => { if (!frame) frame = window.requestAnimationFrame(update); };
-    const resize = () => { if (mounted) { measure(); schedule(); } };
-    measure();
-    schedule();
-    window.addEventListener('scroll', schedule, { passive: true });
-    window.addEventListener('resize', resize);
-    const observer = new ResizeObserver(resize);
-    observer.observe(document.body);
-    void document.fonts.ready.then(resize);
-    return () => {
-      mounted = false;
-      window.cancelAnimationFrame(frame);
-      window.removeEventListener('scroll', schedule);
-      window.removeEventListener('resize', resize);
-      observer.disconnect();
-    };
-  }, []);
-  return state;
+  const root = useRef<HTMLElement>(null);
+  const trigger = useRef<ScrollTrigger | null>(null);
+  const [progress,setProgress] = useState(0);
+  useEffect(()=>{
+    gsap.registerPlugin(ScrollTrigger);
+    const playhead = {progress:0};
+    const context = gsap.context(()=>{
+      const tween = gsap.to(playhead,{progress:1,ease:'none',onUpdate:()=>setProgress(playhead.progress),scrollTrigger:{trigger:root.current,pin:'.scroll-stage',start:'top top',end:()=>`+=${window.innerHeight*SCROLL_SCREENS}`,scrub:window.matchMedia('(prefers-reduced-motion: reduce)').matches ? true : SCRUB_SECONDS,invalidateOnRefresh:true}});
+      trigger.current = tween.scrollTrigger ?? null;
+    },root);
+    return ()=>{trigger.current=null;context.revert();};
+  },[]);
+  const goTo = (chapter:number)=>{
+    const scene = trigger.current;
+    if (!scene) return;
+    window.scrollTo({top:scene.start+chapterProgress(chapter)*(scene.end-scene.start),behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+  };
+  return {root,goTo,...timelineState(progress)};
 }

@@ -1,24 +1,22 @@
-import { test } from 'node:test';
+import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import { revealProgress, activeChapter } from '../lib/scroll-state.mjs';
+import {timelineState,cardMotion,clampZoom,chapterProgress} from '../lib/scroll-state.mjs';
 
-test('wireframe at the top, full material at the last chapter', () => {
-  assert.equal(revealProgress(0, 5000), 0);
-  assert.equal(revealProgress(2500, 5000), .5);
-  assert.equal(revealProgress(5000, 5000), 1);
+test('intro starts without cards and with wireframe',()=>{
+ const s=timelineState(0); assert.equal(s.active,0); assert.equal(s.reveal,0); assert.equal(s.intro,1); assert.equal(cardMotion(0,0,'left').opacity,0);
 });
-test('clamp elastic overscroll and reject invalid geometry', () => {
-  for (const [top, end] of [[-100,5000],[1,0],[1,-1],[NaN,5],[5,Infinity]]) assert.equal(revealProgress(top,end),0);
-  assert.equal(revealProgress(6000,5000),1);
+test('lines draw before a card becomes visible',()=>{
+ const s=cardMotion(.139,0,'left'); assert.ok(s.line>0);assert.equal(s.opacity,0);
+ const shown=cardMotion(.19,0,'left');assert.equal(shown.opacity,1);assert.equal(shown.line,1);
 });
-test('scrolling back reverses material continuously', () => {
-  const positions = [5000,4000,3000,2000,1000,0];
-  assert.deepEqual(positions.map(top=>revealProgress(top,5000)),[1,.8,.6,.4,.2,0]);
+test('paired cards stagger, reverse deterministically and persist at the end',()=>{
+ assert.ok(cardMotion(.16,0,'left').opacity>cardMotion(.16,0,'right').opacity);
+ assert.equal(cardMotion(.42,0,'left').opacity,0);
+ assert.equal(cardMotion(1,4,'left').opacity,1);assert.equal(cardMotion(1,4,'right').opacity,1);
+ assert.deepEqual(timelineState(.5),timelineState(.5));assert.equal(timelineState(1).reveal,1);
 });
-test('active chapter uses reading position across variable section heights', () => {
-  const starts=[0,900,2100,3100,4100,5400];
-  assert.equal(activeChapter(0,starts,900),0);
-  assert.equal(activeChapter(900,starts,900),1);
-  assert.equal(activeChapter(5400,starts,900),5);
-  assert.equal(activeChapter(0,[],900),0);
+test('timeline and zoom clamp invalid and out-of-bounds values',()=>{
+ assert.equal(timelineState(-2).active,0);assert.equal(timelineState(NaN).reveal,0);
+ assert.equal(timelineState(2).active,5);assert.equal(clampZoom(3),1.35);assert.equal(clampZoom(.1),.8);assert.equal(clampZoom(NaN),1);
+ assert.equal(chapterProgress(0),0);assert.ok(chapterProgress(5)<1);assert.equal(chapterProgress(99),chapterProgress(5));
 });

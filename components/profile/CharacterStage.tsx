@@ -2,8 +2,8 @@
 import type { CSSProperties } from 'react';
 import Image from 'next/image';
 
-export default function CharacterStage({ progress }: { progress: number }) {
-  const style = { '--reveal': `${progress * 100}%` } as CSSProperties;
+export default function CharacterStage({ progress, zoom }: { progress: number; zoom: number }) {
+  const style = { '--reveal': `${progress * 100}%`, '--character-zoom': zoom } as CSSProperties;
   return (
     <figure className="character-stage" style={style}>
       <figcaption className="sr-only">Nhân vật hoạt hình của thầy Hà Long Giang, chuyển từ khung lưới xanh sang màu hoàn chỉnh theo chiều cuộn.</figcaption>
