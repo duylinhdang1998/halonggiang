@@ -11,7 +11,7 @@
     "start": "wrangler dev --config dist/server/wrangler.json",
     "lint": "oxlint && eslint app components/profile hooks/use-profile-scroll.ts lib",
     "format": "oxfmt",
-    "test": "node --test --experimental-test-coverage --test-coverage-include=lib/scroll-state.mjs tests/scroll-state.test.mjs"
+    "test": "node --test --experimental-test-coverage --test-coverage-include=lib/scroll-state.mjs tests/scroll-state.test.mjs tests/reference-geometry.test.mjs"
   },
   "dependencies": {
     "@base-ui/react": "1.7.0",
