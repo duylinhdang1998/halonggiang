@@ -1,3 +1,4 @@
+/* oxlint-disable nextjs/no-html-link-for-pages -- Full document navigation supports both static Vercel routes and Vinext. */
 'use client';
 import {useState,useCallback} from 'react';
 import type {CSSProperties} from 'react';
@@ -30,7 +31,7 @@ export default function ProfileExperience() {
      <div className="intro-copy" style={introStyle} aria-hidden={intro<.05} inert={intro<.05}>
        <h1 className="profile-name">Hà Long <span>Giang</span></h1><FounderIdentity/>
        <p className="intro-lead">Nền tảng quản trị vững chắc.<br/>Tầm nhìn phát triển bền vững.</p>
-       <Button className="primary-link" variant="outline" onClick={()=>goTo(1)}>Bắt đầu khám phá<ArrowDown size={18}/></Button>
+       <Button className="primary-link" variant="outline" onClick={()=>goTo(1)}>Bắt đầu khám phá<ArrowDown size={18}/></Button><a className="profile-bio-link" href="/ho-so/">Hồ sơ &amp; chứng chỉ →</a>
      </div>
      <div className="intro-aside" style={introStyle} aria-hidden="true"><span>QUẢN TRỊ</span><span>TÀI CHÍNH</span><span>PHÁT TRIỂN BỀN VỮNG</span><i/></div>
      {cardPairs.map((pair,index)=><div key={chapters[index+1].id} className="chapter-scene"><LightConnectors progress={progress} pair={index} anchors={anchors} mobileY={anchors.mobileY??560}/><HologramCard card={pair[0]} pair={index} side="left" progress={progress}/><HologramCard card={pair[1]} pair={index} side="right" progress={progress}/></div>)}

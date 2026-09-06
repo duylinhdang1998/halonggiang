@@ -15,7 +15,7 @@ export const cardPairs: [ProfileCardData,ProfileCardData][] = [
  ],
  [
   {label:'CHUẨN MỰC QUỐC TẾ',title:'ICAEW Chartered Accountant',body:'Hành trình chinh phục danh vị ICAEW Chartered Accountant của thầy được Báo Dân trí ghi nhận với phương pháp học tập và phát triển nghề nghiệp khác biệt.',link:{label:'Đọc trên Dân trí',url:links.article}},
-  {label:'HÀNH TRÌNH CHUYÊN MÔN',title:'Học hỏi không ngừng.',body:'Theo đuổi các chuẩn mực quốc tế và cam kết nâng cao năng lực chuyên môn trong lĩnh vực tài chính, kế toán và quản trị doanh nghiệp.'}
+  {label:'HÀNH TRÌNH CHUYÊN MÔN',title:'CA (Singapore)',body:'Hội viên kỳ cựu ACCA (FCCA), ICAEW Chartered Accountant và Singapore Chartered Accountant. Thầy chia sẻ cột mốc CA (Singapore) qua chương trình chuyển đổi dành cho hội viên ACCA của ISCA.',link:{label:'Đọc chia sẻ của thầy',url:links.singapore}}
  ],
  [
   {label:'KẾT NỐI · FACEBOOK',title:'Hà Long Giang',body:'Theo dõi những chia sẻ và góc nhìn của thầy qua trang Facebook cá nhân.',link:{label:'Mở Facebook',url:links.facebook}},

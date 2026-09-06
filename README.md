@@ -49,3 +49,16 @@ npm run preview:vercel
 ```
 
 Production: https://halonggiang.vercel.app/
+
+## SEO và hồ sơ chuyên môn
+
+- `/`: hồ sơ tương tác, tên Hà Long Giang (Giang Ha), Founder BISC & 9Learning.
+- `/ho-so/`: hồ sơ đọc đầy đủ, chuyên môn ACCA/FCCA, ICAEW và CA Singapore, kèm nguồn công khai.
+- `lib/seo.ts`: tiêu đề, mô tả, tên miền chính và ảnh chia sẻ.
+- `lib/profile-schema.ts`: dữ liệu ProfilePage, Person, Organization và danh vị có nguồn.
+- `scripts/prerender.mjs`: xuất HTML thực của cả hai trang khi build, cùng sitemap.xml và robots.txt. Trình duyệt hydrate cùng component React để giữ hiệu ứng.
+- `tests/seo.test.mjs`: kiểm tra HTML trước JavaScript, canonical, dữ liệu có cấu trúc, chứng chỉ và sitemap; tự chạy trong build Vercel.
+
+Danh vị CA (Singapore) dẫn bài công khai do chủ hồ sơ cung cấp; không thay thế việc tra cứu registry nghề nghiệp. Không tạo từ khóa ẩn, đánh giá hoặc chứng chỉ không có nguồn.
+
+Sau triển khai, xác minh URL-prefix `https://halonggiang.vercel.app/` trong Google Search Console, sau đó gửi `sitemap.xml` và yêu cầu lập chỉ mục hai URL. Chưa cấu hình mã xác minh Search Console trong repository. Khi đổi tên miền, cập nhật canonical, sitemap và các URL trong metadata cùng lúc.

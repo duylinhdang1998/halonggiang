@@ -39,3 +39,5 @@ button.model-viewport{border:0;padding:0;margin:0;background:transparent;color:i
 /* Fit the full name inside the introduction column at every breakpoint. */
 .intro-copy{container-type:inline-size}.profile-name{font-size:clamp(1.5rem,12.5cqw,3.75rem);white-space:nowrap;letter-spacing:-.055em}.profile-name span::before{content:none}
 @media(max-width:760px){.profile-name{font-size:clamp(1.5rem,8.5cqw,2.25rem)}}
+
+.profile-bio-link{display:block;width:fit-content;min-height:44px;padding:.75rem 0;color:var(--muted-foreground);font-size:.75rem}.profile-bio-link:hover{color:var(--primary);text-decoration:underline}@media(max-width:760px){.profile-bio-link{margin:auto;padding:.5rem 0;min-height:44px}}

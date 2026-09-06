@@ -5,7 +5,7 @@ import path from 'node:path';
 import {fileURLToPath,pathToFileURL} from 'node:url';
 const testDirectory=path.dirname(fileURLToPath(import.meta.url));
 import {spawnSync} from 'node:child_process';
-test('approved image projection is aligned and the relief has no open mesh edges',async()=>{
+void test('approved image projection is aligned and the relief has no open mesh edges',async()=>{
  const output=fs.mkdtempSync(path.join(testDirectory,'.geometry-check-'));
  try {
   const compile=spawnSync(process.execPath,[fileURLToPath(import.meta.resolve('typescript/bin/tsc')),'lib/character/reference-geometry.ts','lib/character/reference-shape.ts','--outDir',output,'--module','commonjs','--target','ES2022','--skipLibCheck'],{cwd:path.join(testDirectory,'..'),encoding:'utf8'});

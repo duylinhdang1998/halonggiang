@@ -9,10 +9,10 @@
     "dev": "vinext dev",
     "build": "vinext build",
     "start": "wrangler dev --config dist/server/wrangler.json",
-    "lint": "oxlint && eslint app components/profile components/backgrounds hooks lib",
+    "lint": "oxlint && eslint app components/profile components/backgrounds components/biography vercel-app hooks lib",
     "format": "oxfmt",
     "test": "node --test --experimental-test-coverage --test-coverage-include=lib/scroll-state.mjs tests/scroll-state.test.mjs tests/reference-geometry.test.mjs",
-    "build:vercel": "vite build --config vite.vercel.config.ts",
+    "build:vercel": "vite build --config vite.vercel.config.ts && node scripts/prerender.mjs && node --test tests/seo.test.mjs",
     "preview:vercel": "vite preview --config vite.vercel.config.ts"
   },
   "dependencies": {
