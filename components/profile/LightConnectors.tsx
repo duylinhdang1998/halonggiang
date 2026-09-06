@@ -1,22 +1,17 @@
 'use client';
+import type {Anchors} from '@/lib/character/scene';
 import {cardMotion} from '@/lib/scroll-state.mjs';
-
-type Props={progress:number;pair:number;zoom:number};
-export default function LightConnectors({progress,pair,zoom}:Props) {
- const left=cardMotion(progress,pair,'left');
- const right=cardMotion(progress,pair,'right');
- const leftX=500-55*zoom;
- const rightX=500+55*zoom;
+type Props={progress:number;pair:number;anchors:Anchors;mobileY:number};
+export default function LightConnectors({progress,pair,anchors,mobileY}:Props) {
  return <svg className="light-connectors" viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">
-   <g className="connector-left" opacity={left.line}>
-     <path className="connector-glow" d={`M${leftX},350 L365,430 H285`} pathLength={1} strokeDasharray={1} strokeDashoffset={1-left.line}/>
-     <path d={`M${leftX},350 L365,430 H285`} pathLength={1} strokeDasharray={1} strokeDashoffset={1-left.line}/>
-     <circle cx={leftX} cy={350} r={3}/>
-   </g>
-   <g className="connector-right" opacity={right.line}>
-     <path className="connector-glow" d={`M${rightX},455 L635,540 H715`} pathLength={1} strokeDasharray={1} strokeDashoffset={1-right.line}/>
-     <path d={`M${rightX},455 L635,540 H715`} pathLength={1} strokeDasharray={1} strokeDashoffset={1-right.line}/>
-     <circle cx={rightX} cy={455} r={3}/>
-   </g>
+  {(['left','right'] as const).map(side=>{const motion=cardMotion(progress,pair,side);const [x,y]=anchors[side];const d=side==='left'?`M${x},${y} L365,430 H285`:`M${x},${y} L635,540 H715`;
+   return <g key={side} opacity={motion.line} data-phase={motion.phase}>
+    <g className={`connector-${side}`}>
+    <path className="connector-glow" d={d} pathLength={1} strokeDasharray={1} strokeDashoffset={1-motion.line}/>
+    <path d={d} pathLength={1} strokeDasharray={1} strokeDashoffset={1-motion.line}/>
+    <path className="connector-flow" d={d} pathLength={1} opacity={motion.opacity} strokeDasharray=".035 .965"/>
+    <circle className="connector-ring" cx={x} cy={y} r={8}/><circle cx={x} cy={y} r={3}/>
+   </g><g className="connector-mobile" opacity={motion.mobile?motion.mobileOpacity:0}><path className="connector-glow" d={`M${x},${y} L220,440 V${mobileY}`} pathLength={1} strokeDasharray={1} strokeDashoffset={1-motion.line}/><path d={`M${x},${y} L220,440 V${mobileY}`} pathLength={1} strokeDasharray={1} strokeDashoffset={1-motion.line}/><circle cx={x} cy={y} r={4}/></g></g>;
+  })}
  </svg>;
 }
