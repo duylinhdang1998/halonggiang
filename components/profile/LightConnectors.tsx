@@ -1,5 +1,5 @@
 'use client';
-import type {Anchors} from '@/lib/character/scene';
+import type {Anchors} from '@/lib/profile-anchors';
 import {cardMotion} from '@/lib/scroll-state.mjs';
 type Props={progress:number;pair:number;anchors:Anchors;mobileY:number};
 export default function LightConnectors({progress,pair,anchors,mobileY}:Props) {

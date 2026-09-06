@@ -36,3 +36,8 @@ next-env.d.ts
 /.wrangler/
 /outputs/
 /work/
+
+# compiler and Python caches
+*.tsbuildinfo
+__pycache__/
+*.py[cod]

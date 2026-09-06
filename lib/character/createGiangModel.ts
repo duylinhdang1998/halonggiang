@@ -1,31 +1,34 @@
 import * as THREE from 'three';
-import {createReferenceGeometry,createReferenceRim} from './reference-geometry';
-import {createReferenceBackMaterial} from './reference-material';
-import {REFERENCE} from './reference-shape';
-import {revealUniform,createWireMaterial,createSkeletonMaterial} from './materials';
-// Front-projected relief: exact approved front pixels, inferred rounded depth/rear.
-export function createGiangModel(onTextureReady:()=>void) {
- const root=new THREE.Group();root.name='HaLongGiang-approved-reference';
- const texture=new THREE.TextureLoader().load('/giang-character.png',onTextureReady);texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=4;
- const frontMaterial=new THREE.MeshBasicMaterial({map:texture,side:THREE.DoubleSide,toneMapped:false});
- frontMaterial.onBeforeCompile=shader=>{
-  shader.uniforms.revealLevel=revealUniform;shader.fragmentShader='uniform float revealLevel;\n'+shader.fragmentShader;
-  shader.fragmentShader=shader.fragmentShader.replace('#include <map_fragment>',`
-   vec4 fullColor=texture2D(map,vMapUv);
-   vec4 wireColor=texture2D(map,vMapUv+vec2(${REFERENCE.wireOffset/REFERENCE.width},0.0));
-   float threshold=1.0-(45.0+revealLevel*1030.0)/1109.0;
-   float colored=step(threshold,vMapUv.y);
-   diffuseColor *= mix(wireColor,fullColor,colored);
-   float scan=(1.0-smoothstep(0.0,.0014,abs(vMapUv.y-threshold)))*step(.005,revealLevel)*(1.0-step(.995,revealLevel));
-   diffuseColor.rgb+=vec3(.15,.55,.65)*scan;
-  `);
- };
- frontMaterial.customProgramCacheKey=()=> 'approved-reference-front-v1';
- const front=new THREE.Mesh(createReferenceGeometry(),frontMaterial);front.name='approved-front-projection';root.add(front);
- const backGeometry=createReferenceGeometry(true);const backMaterial=createReferenceBackMaterial();backMaterial.side=THREE.DoubleSide;
- const back=new THREE.Mesh(backGeometry,backMaterial);back.name='inferred-back-volume';root.add(back);
- const wire=new THREE.Mesh(backGeometry,createWireMaterial());wire.name='rear-wire';root.add(wire);
- const shell=new THREE.Mesh(backGeometry,createSkeletonMaterial());shell.name='rear-depth-shell';root.add(shell);
- const rim=new THREE.Mesh(createReferenceRim(),backMaterial);rim.name='closed-silhouette-rim';root.add(rim);
- root.userData={source:'approved-image-projection',front:'original-pixels',geometry:'inflated-relief',inferred:['depth','rear'],height:5.6};return root;
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {applyReveal,createSkeletonMaterial} from './materials';
+import {createBlenderScanMaterial} from './blenderScanMaterial';
+
+function releaseAsset(asset:THREE.Object3D) {
+ const geometries=new Set<THREE.BufferGeometry>(),materials=new Set<THREE.Material>(),textures=new Set<THREE.Texture>();
+ asset.traverse(object=>{if(object instanceof THREE.Mesh){geometries.add(object.geometry);(Array.isArray(object.material)?object.material:[object.material]).forEach(material=>materials.add(material));}});
+ materials.forEach(material=>{for(const value of Object.values(material))if(value instanceof THREE.Texture)textures.add(value);material.dispose();});
+ geometries.forEach(geometry=>geometry.dispose());textures.forEach(texture=>{texture.dispose();if(typeof ImageBitmap!=='undefined'&&texture.image instanceof ImageBitmap)texture.image.close();});
+}
+
+export function createGiangModel(onReady:()=>void,onError:()=>void) {
+ let disposed=false;
+ const root=Object.assign(new THREE.Group(),{disposeResources(){if(disposed)return;disposed=true;releaseAsset(root);root.clear();}});
+ root.name='HaLongGiang-Blender';
+ root.userData={source:'Blender-5.2.1-native',height:5.6,inferred:['sides','rear'],visualAcceptance:'trial'};
+ new GLTFLoader().load('/models/giang-continuous.glb',gltf=>{
+  const asset=gltf.scene;
+  if(disposed){releaseAsset(asset);return;}
+  const meshes:THREE.Mesh[]=[];const materials=new Set<THREE.Material>();
+  asset.traverse(object=>{if(object instanceof THREE.Mesh){meshes.push(object);(Array.isArray(object.material)?object.material:[object.material]).forEach(material=>materials.add(material));}});
+  if(!meshes.length){releaseAsset(asset);onError();return;}
+  materials.forEach(material=>{material.toneMapped=false;applyReveal(material,'color');});
+  const wireMaterial=createBlenderScanMaterial(),shellMaterial=createSkeletonMaterial();
+  for(const mesh of meshes){
+   const wire=new THREE.Mesh(mesh.geometry,mesh.userData.continuous_upper_body?createBlenderScanMaterial(true):wireMaterial);wire.name=`${mesh.name}-scan-grid`;
+   const shell=new THREE.Mesh(mesh.geometry,shellMaterial);shell.name=`${mesh.name}-scan-shell`;
+   mesh.add(shell,wire);
+  }
+  root.add(asset);onReady();
+ },undefined,()=>{if(!disposed)onError();});
+ return root;
 }
