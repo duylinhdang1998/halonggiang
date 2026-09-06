@@ -7,6 +7,7 @@ import {chapters} from '@/lib/profile';
 import {cardPairs} from '@/lib/profile-cards';
 import {useProfileScroll} from '@/hooks/use-profile-scroll';
 import CharacterStage from './CharacterStage';
+import ProfileBackground from './ProfileBackground';
 import HologramCard from './HologramCard';
 import LightConnectors from './LightConnectors';
 import FounderIdentity from './FounderIdentity';
@@ -24,10 +25,10 @@ export default function ProfileExperience() {
        <Button variant="ghost" className="wordmark" onClick={()=>goTo(0)} aria-label="Hà Long Giang, về giới thiệu"><span className="monogram">G.</span><span>HÀ LONG GIANG</span></Button>
        <nav className="top-nav" aria-label="Điều hướng chính"><Button variant="ghost" onClick={()=>goTo(1)}>Chuyên môn</Button><Button variant="ghost" onClick={()=>goTo(4)}>Hành trình</Button><Button variant="outline" className="contact-link" onClick={()=>goTo(5)}>Kết nối<ArrowUpRight size={16}/></Button></nav>
      </header>
-     <div className="scene-grid" aria-hidden="true"/>
+     <ProfileBackground/>
      <CharacterStage progress={progress} reveal={reveal} onAnchors={updateAnchors}/>
      <div className="intro-copy" style={introStyle} aria-hidden={intro<.05} inert={intro<.05}>
-       <p className="intro-eyebrow">HỒ SƠ NHÀ SÁNG LẬP</p><h1>Hà Long<br/><span>Giang.</span></h1><FounderIdentity/>
+       <h1 className="profile-name">Hà Long <span>Giang</span></h1><FounderIdentity/>
        <p className="intro-lead">Nền tảng quản trị vững chắc.<br/>Tầm nhìn phát triển bền vững.</p>
        <Button className="primary-link" variant="outline" onClick={()=>goTo(1)}>Bắt đầu khám phá<ArrowDown size={18}/></Button>
      </div>

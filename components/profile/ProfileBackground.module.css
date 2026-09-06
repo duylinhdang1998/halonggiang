@@ -1,0 +1,21 @@
+.background {
+ position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;contain:strict;
+ --beam-soft:color-mix(in srgb,var(--primary) 9%,transparent);
+}
+.halo {
+ position:absolute;inset:-20% -10%;
+ background:radial-gradient(ellipse at 52% 4%,color-mix(in srgb,var(--primary) 13%,transparent),transparent 47%),radial-gradient(ellipse at 92% 58%,var(--beam-soft),transparent 38%);
+}
+.lightField{position:absolute;inset:0;opacity:.8;mask-image:linear-gradient(transparent,black 12%,black 78%,transparent)}
+.horizon{
+ position:absolute;left:12%;right:12%;bottom:12%;height:16%;
+ background:radial-gradient(ellipse at 50% 90%,color-mix(in srgb,var(--primary) 11%,transparent),transparent 65%);
+}
+.floor {
+ position:absolute;left:-30%;right:-30%;height:50%;bottom:-30%;
+ background-image:linear-gradient(var(--beam-soft) 1px,transparent 1px),linear-gradient(90deg,var(--beam-soft) 1px,transparent 1px);
+ background-size:64px 64px;transform:perspective(400px) rotateX(58deg);transform-origin:center top;
+ mask-image:radial-gradient(ellipse at 50% 20%,black,transparent 65%);
+}
+.vignette{position:absolute;inset:0;background:radial-gradient(ellipse 25% 60% at 50% 46%,var(--background) 48%,transparent 100%),radial-gradient(ellipse at 50% 40%,transparent 28%,color-mix(in srgb,var(--background) 58%,transparent) 90%),linear-gradient(transparent 78%,var(--background))}
+@media(max-width:760px){.lightField{opacity:.45}.halo{opacity:.7}.floor{opacity:.4}.vignette{background:radial-gradient(ellipse 32% 38% at 50% 28%,var(--background) 40%,transparent),linear-gradient(transparent 35%,color-mix(in srgb,var(--background) 70%,transparent) 65%)}}
